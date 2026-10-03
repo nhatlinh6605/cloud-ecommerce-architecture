@@ -1,0 +1,45 @@
+# KIẾN TRÚC CẢI TIẾN: LB01 + APP01/APP02 + DB01 + OBJ01 + MON01
+name: improved
+services:
+  lb01:
+    image: nginx:1.27-alpine
+    volumes: ["./nginx/nginx.conf:/etc/nginx/nginx.conf:ro"]
+    ports: ["8080:80"]
+    depends_on: [app01, app02]
+  app01:
+    build: ./app
+    environment: &appenv
+      INSTANCE: app01
+      DB_HOST: db01
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      MINIO_HOST: obj01
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+    depends_on: [db01, obj01]
+  app02:
+    build: ./app
+    environment: { <<: *appenv, INSTANCE: app02 }
+    depends_on: [db01, obj01]
+  db01:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: "${DB_USER}", POSTGRES_PASSWORD: "${DB_PASSWORD}", POSTGRES_DB: "${DB_NAME}" }
+    volumes:
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - dbdata:/var/lib/postgresql/data
+    healthcheck: { test: ["CMD-SHELL","pg_isready -U ${DB_USER}"], interval: 5s, retries: 10 }
+  obj01:
+    image: pgsty/minio:latest
+    command: server /data --console-address ":9001"
+    environment: { MINIO_ROOT_USER: "${MINIO_ACCESS_KEY}", MINIO_ROOT_PASSWORD: "${MINIO_SECRET_KEY}" }
+    volumes: [objdata:/data]
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    volumes: ["./monitoring/prometheus.improved.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+  grafana:
+    image: grafana/grafana:11.0.0
+    ports: ["3001:3000"]
+volumes: { dbdata: {}, objdata: {} }

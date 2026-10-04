@@ -8,7 +8,7 @@ for p in normal peak spike; do
   for r in $(seq 1 $REPS); do
     bash scripts/reset-data.sh $([ "$ARCH" = improved ] && echo improved || echo base) >/dev/null
     OUT=results/${ARCH}-${p}-run${r}
-    echo "$(date -Is) $ARCH LOAD-${p^^} lần $r"
+    echo "$(date +%Y-%m-%dT%H:%M:%S%z) $ARCH LOAD-${p^^} lần $r"
     PROFILE=$p BASE_URL=http://localhost:8080 k6 run load/load.js --summary-export $OUT.json 2>&1 | tee $OUT.log | tail -n 25
   done
 done

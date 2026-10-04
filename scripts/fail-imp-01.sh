@@ -3,7 +3,7 @@
 # Điều kiện: kiến trúc cải tiến đang chạy (improved-up.sh). Thoại đo recovery time từ mốc trong log.
 source "$(dirname "$0")/_common.sh"
 mkdir -p results; LOG=results/fail-imp-01-$(date +%Y%m%d-%H%M%S).log
-ev() { echo "$(date -Is) $*" | tee -a "$LOG"; }
+ev() { echo "$(date +%Y-%m-%dT%H:%M:%S%z) $*" | tee -a "$LOG"; }
 command -v k6 >/dev/null || { echo "Cần cài k6"; exit 1; }
 
 ev "START tải LOAD-NORMAL nền (120s)"

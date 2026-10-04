@@ -14,7 +14,8 @@ sleep 30
 ev "CHECK phân phối sau khi mất APP02:"
 for i in 1 2 3 4 5 6; do curl -si localhost:8080/health | grep -iE "^HTTP|x-instance" | tr '\r\n' ' ' | tee -a "$LOG"; echo | tee -a "$LOG"; done
 ev "EVENT bật lại APP02"; bash scripts/app02-start.sh | tee -a "$LOG"
-until curl -fs localhost:8080/health >/dev/null; do sleep 1; done
+until curl -si localhost:8080/health | grep -qi "x-instance: app02"; do sleep 0.5; done
+ev "APP02 NHAN LAI REQUEST"
 sleep 10
 ev "CHECK sau khi phục hồi:"
 for i in $(seq 1 8); do curl -si localhost:8080/health | grep -i "x-instance" | tr -d '\r' | tee -a "$LOG"; done

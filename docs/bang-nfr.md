@@ -1,58 +1,39 @@
-# Bảng yêu cầu phi chức năng và chỉ số chấp nhận (bản nháp)
+# BẢNG YÊU CẦU PHI CHỨC NĂNG (NFR) VÀ TIÊU CHÍ CHẤP NHẬN
+**Đề tài:** Đánh giá và thiết kế lại kiến trúc website thương mại điện tử theo khung Well-Architected  
+**Người phụ trách:** Phan Quang Thoại (SV3) | **Phối hợp & Đối chiếu:** Lê Văn Nhựt (SV1)
 
-Đề tài 1: Đánh giá và thiết kế lại kiến trúc website thương mại điện tử theo khung Well-Architected.
+---
 
-| Mục | Nội dung |
-|---|---|
-| Soạn nháp phần ngưỡng | Lê Văn Nhựt, 07/10/2026 |
-| Bổ sung cách đo, tiêu chí Pass/Fail, chốt bản cuối | Phan Quang Thoại |
-| Trạng thái | Nháp, chờ nhóm chốt. Mọi số trong file là giả định của doanh nghiệp giả định, không phải số đo thực |
+## 1. Thiết lập Workload và Môi trường đo kiểm
+Căn cứ vào script kiểm thử `load/load.js` và `scripts/run-load.sh`, các thông số tải chuẩn được xác định như sau:
+* **LOAD-NORMAL (Tải thường):** Target **20 VUs** duy trì trong **2 phút** (Ramp-up 30s, Ramp-down 10s).
+* **LOAD-PEAK (Tải cao điểm):** Target **100 VUs** duy trì trong **2 phút** (Ramp-up 30s, Ramp-down 10s).
+* **LOAD-SPIKE (Tải đột biến):** Nhảy vọt lên **200 VUs** trong **1 phút** rồi hạ về mức tải nền 20 VUs.
+* **Số lần lặp (Repetitions):** Mỗi kịch bản chạy lặp lại **3 lần** (`REPS=3`) trên môi trường sạch sau khi chạy `scripts/reset-data.sh`.
+* **Hạn chế đo lường:** Do máy sinh tải `k6` chạy cùng máy vật lý với hệ thống Docker, CPU của máy sinh tải có thể làm độ trễ tăng nhẹ; nhóm ghi nhận yếu tố này vào báo cáo.
 
-Nguyên tắc: ngưỡng được **chốt trước khi có số liệu đo chính thức** và dùng chung cho cả hai kiến trúc. Kiến trúc cơ sở có thể không đạt một số ngưỡng. Đó là phát hiện của thí nghiệm, không phải lỗi của bảng này.
+---
 
-## 1. Giả định nghiệp vụ (nhóm chỉnh nếu cần)
+## 2. Bảng Ma trận NFR và Tiêu chí chấp nhận (SLO)
 
-| Mã | Giả định | Giá trị | Lý do |
-|---|---|---|---|
-| GD-01 | Số phiên truy cập mỗi ngày | 50.000 | Website bán hàng cỡ vừa |
-| GD-02 | Số request mỗi phiên | 12 | Xem danh sách, chi tiết, ảnh, giỏ hàng, đặt hàng |
-| GD-03 | Tỷ lệ lưu lượng ngày dồn vào giờ cao điểm | 40% trong 3 giờ | Mẫu thường gặp ở bán lẻ trực tuyến |
-| GD-04 | Hệ số tăng đột biến so với cao điểm | 3 lần | Giả định cho đợt khuyến mãi |
-| GD-05 | Số ngày tính chi phí và sẵn sàng | 30 ngày (720 giờ) | Chu kỳ tháng |
+| Mã NFR | Trụ cột | Hạng mục kiểm thử | Chỉ số đo lường (SLI) | Tiêu chí chấp nhận (SLO) | Công cụ & Kịch bản | Người thực hiện |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **NFR-01** | **Hiệu năng** | Tải thông thường (`LOAD-NORMAL`) | • Latency p95<br>• Latency p50<br>• Throughput<br>• Error Rate | • **p95 ≤ 300 ms**<br>• p50 ≤ 100 ms<br>• Throughput ≥ 50 req/s<br>• **Error Rate = 0.00%** | k6 (`load/load.js`), profile `normal` | Linh chạy tải; Thoại trích xuất số liệu. |
+| **NFR-02** | **Hiệu năng** | Tải cao điểm (`LOAD-PEAK`) | • Latency p95<br>• Throughput<br>• Error Rate | • **p95 ≤ 800 ms**<br>• Throughput ≥ 150 req/s<br>• **Error Rate ≤ 0.5%** | k6 (`load/load.js`), profile `peak` | Linh chạy tải; Thoại đo và tổng hợp. |
+| **NFR-03** | **Độ bền** | Tải đột biến (`LOAD-SPIKE`) | • Tỷ lệ lỗi tức thời<br>• Khả năng tự hồi phục | • **Error Rate ≤ 2.0%**<br>• Trở về ổn định ngay sau khi hết đợt spike | k6 (`load/load.js`), profile `spike` | Linh chạy spike; Thoại ghi nhận. |
+| **NFR-04** | **Độ tin cậy** | Chuyển lỗi khi tắt 1 bản sao (`FAIL-IMP-01`) | • Thời gian chuyển tải (`failover_s`)<br>• Thời gian tái nhập (`rejoin_s`)<br>• Error rate trong sự cố | • **failover_s ≤ 7 giây**<br>• **rejoin_s ≤ 10 giây**<br>• Error rate sự cố ≤ 2.0% | Chạy `scripts/fail-imp-01.sh` dừng `app02` | Linh dừng app; Nhựt check LB; Thoại đo. |
+| **NFR-05** | **Độ tin cậy** | Hành vi sập nút đơn (`FAIL-BASE-01`) | • Mức độ gián đoạn<br>• Thời gian phục hồi | • Gián đoạn 100% (Downtime)<br>• Cần can thiệp khởi động lại thủ công | Chạy lệnh dừng `app01` trên `BASE-NODE` | Thoại ghi nhận làm cơ sở đối chứng SPOF. |
+| **NFR-06** | **Lưu trữ** | Tách dữ liệu tĩnh (Stateless App) | • Tỷ lệ đọc/ghi ảnh thành công<br>• Toàn vẹn sau khởi động lại | • **100%** ảnh truy cập thành công qua MinIO<br>• Ảnh bảo toàn nguyên vẹn sau khi restart app | Gọi `/products/:id/image`; restart container | Linh kiểm thử; Thoại ghi nhận. |
+| **NFR-07** | **Bảo mật** | Cô lập mạng & kiểm soát secret | • Số secret bị lộ trong git<br>• Cổng mở Database | • **0** thông tin mật (password/key) trong git<br>• `db01` **không mở cổng Public** ra ngoài | Quét kho mã bằng Trivy/Gitleaks; check compose | Nhựt rà soát; Thoại lập biên bản. |
+| **NFR-08** | **Vận hành** | Giám sát & Quan sát (Observability) | • Tần suất lấy mẫu (Scrape interval)<br>• Mức độ bao phủ thành phần | • **Scrape interval ≤ 5 giây**<br>• Giám sát đầy đủ: Nginx, 2 App, PostgreSQL, MinIO | Kiểm tra Prometheus (`monitoring/`) | Thoại dựng Dashboard; Nhựt hỗ trợ exporter. |
+| **NFR-09** | **Chi phí** | Ngân sách & Phân tích độ nhạy | • Ngân sách mô phỏng tháng<br>• Phân tích độ nhạy khi tăng tải | • Ngân sách giả định ≤ **50 – 100 USD/tháng**<br>• Phân tích chi phí khi tải tăng 2x và 5x | AWS Pricing Calculator; lưu `cost/cost-estimate.xlsx` | Thoại tính toán; Nhựt kiểm tra. |
 
-## 2. Lưu lượng dự kiến
+---
 
-| Mức tải | Cách tính | Kết quả |
-|---|---|---|
-| LOAD-NORMAL | 50.000 × 12 = 600.000 request/ngày; 600.000 ÷ 86.400 giây | **7 req/s** |
-| LOAD-PEAK | 600.000 × 40% ÷ (3 × 3.600 giây) = 240.000 ÷ 10.800 | **22 req/s** |
-| LOAD-SPIKE | 22,2 × 3 | **67 req/s** |
-
-Nếu ở các mức trên hai kiến trúc không cho khác biệt đo được, nhóm có thể nhân một hệ số mô phỏng chung cho cả ba mức và ghi hệ số đó vào báo cáo như một giả định. Hệ số phải chốt trước khi đo chính thức.
-
-## 3. Bảng yêu cầu và chỉ số chấp nhận
-
-| Mã | Trụ cột | Yêu cầu | Chỉ số | Ngưỡng chấp nhận | Áp dụng cho | Cách đo (Thoại bổ sung) |
-|---|---|---|---|---|---|---|
-| NFR-01 | Hiệu quả hiệu năng | Phản hồi nhanh | p95 latency | ≤ 300 ms ở LOAD-NORMAL; ≤ 500 ms ở LOAD-PEAK; ≤ 1.000 ms ở LOAD-SPIKE | Cơ sở, Cải tiến | |
-| NFR-02 | Hiệu quả hiệu năng | Xử lý đủ lưu lượng | Throughput | ≥ 7 req/s; ≥ 22 req/s; ≥ 67 req/s theo từng mức tải | Cơ sở, Cải tiến | |
-| NFR-03 | Độ tin cậy | Ít request lỗi | Error rate | ≤ 0,5% ở LOAD-NORMAL; ≤ 1% ở LOAD-PEAK; ≤ 2% ở LOAD-SPIKE | Cơ sở, Cải tiến | |
-| NFR-04 | Độ tin cậy | Chịu lỗi một bản ứng dụng | failover_s | ≤ 10 giây: từ lúc dừng APP02 đến khi LB01 phục vụ ổn định chỉ bằng APP01 | Cải tiến | |
-| NFR-05 | Độ tin cậy | Bản sao quay lại sau khi bật | rejoin_s | ≤ 30 giây: từ lúc bật lại APP02 đến khi APP02 nhận request đầu tiên | Cải tiến | |
-| NFR-06 | Độ tin cậy | Không mất giao dịch khi một bản sao dừng | Tỷ lệ request lỗi trong sự cố | ≤ 0,1% tổng request; request GET không được lỗi kéo dài | Cải tiến | |
-| NFR-07 | Độ tin cậy | Mức sẵn sàng của tầng ứng dụng | Thời gian ngừng dịch vụ mỗi tháng | ≥ 99,5% (tối đa 3,6 giờ ngừng mỗi 720 giờ) | Cải tiến | |
-| NFR-08 | Bảo mật | DB và object storage không mở ra ngoài | Kết quả quét cổng | Chỉ LB01 (và cổng giám sát) mở ra máy chủ; DB01, OBJ01 không mở | Cải tiến | |
-| NFR-09 | Bảo mật | Không lộ bí mật | Kết quả quét secret | 0 secret trong kho mã, ảnh minh chứng, log | Cơ sở, Cải tiến | |
-| NFR-10 | Tối ưu chi phí | Chi phí trong ngân sách | Chi phí tháng ước tính | ≤ 100 USD/tháng khi triển khai đám mây (giả định); chạy thí nghiệm cục bộ 0 đồng | Cơ sở, Cải tiến | |
-| NFR-11 | Vận hành | Dựng lại được | Kết quả tái lập | Dựng lại từ kho mã theo README, không chỉnh tay ngoài hướng dẫn | Cơ sở, Cải tiến | |
-
-Giải thích các số chính:
-- NFR-04: Nginx cấu hình `proxy_connect_timeout 1s`, `max_fails=2`, `fail_timeout=5s`, nên ngưỡng 10 giây đủ dài hơn thời gian loại bản sao lỗi.
-- NFR-05: gồm thời gian khởi động container, khởi tạo ứng dụng và chu kỳ `fail_timeout`.
-- NFR-07: 99,5% thay vì 99,9% vì DB01 vẫn là một bản duy nhất (quyết định không triển khai replica trong phạm vi đồ án). 99,9% cho phép khoảng 43 phút ngừng mỗi tháng.
-
-## 4. Việc Thoại bổ sung
-
-- Cột "Cách đo": công cụ, số lần lặp, điều kiện đo, cách lấy từng chỉ số.
-- Tiêu chí Pass/Fail cho từng NFR và ánh xạ sang test case trong `Pham_vi_kiem_thu`.
-- Đối chiếu ngưỡng NFR-10 với bảng chi phí hai kiến trúc.
+## 3. Quy ước file kết quả đầu ra
+Toàn bộ số liệu thực nghiệm sau khi chạy `scripts/run-load.sh` sẽ được Thoại tổng hợp vào thư mục `data/summary/`:
+* `data/summary/latency_p50.csv`
+* `data/summary/latency_p95.csv`
+* `data/summary/throughput.csv`
+* `data/summary/error_rate.csv`
+* `data/summary/recovery_time.csv`

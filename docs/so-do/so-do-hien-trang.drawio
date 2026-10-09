@@ -1,0 +1,88 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Hien trang" id="hien-trang">
+    <mxGraphModel dx="972" dy="505" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;verticalAlign=top;align=left;fontSize=18;fontStyle=1;" value="&lt;font style=&quot;font-size: 19px;&quot;&gt;Sơ đồ kiến trúc hiện trạng: kiến trúc cơ sở BASE-NODE (website ba tầng trên một máy chủ)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="1010" x="30" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="zInternet" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;fontSize=12;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;VÙNG KHÔNG TIN CẬY&lt;br&gt;Internet / mạng LAN&lt;/font&gt;" vertex="1">
+          <mxGeometry height="560" width="190" x="30" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffffff;strokeColor=#666666;" value="Người dùng&lt;br&gt;trình duyệt, công cụ tạo tải k6 (LOADGEN)" vertex="1">
+          <mxGeometry height="90" width="150" x="50" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="zHost" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;fontSize=12;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="MÁY CHỦ ĐƠN (BASE-NODE): Docker Compose project baseline" vertex="1">
+          <mxGeometry height="560" width="780" x="260" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zNet" parent="1" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;fontStyle=1;fontSize=12;fillColor=#ffffff;strokeColor=#82b366;" value="Mạng Docker baseline_default: một mạng phẳng, không phân đoạn" vertex="1">
+          <mxGeometry height="500" width="740" x="280" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="app" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#d5e8d4;strokeColor=#82b366;" value="APP01 (app01)&lt;br&gt;Node.js 20-alpine&lt;br&gt;cổng 3000 trong container, mở ra máy: 8080" vertex="1">
+          <mxGeometry height="100" width="190" x="310" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="db" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#e1d5e7;strokeColor=#9673a6;" value="DB01 (db01)&lt;br&gt;PostgreSQL 16-alpine&lt;br&gt;cổng 5432, chỉ nội bộ" vertex="1">
+          <mxGeometry height="90" width="190" x="640" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="obj" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#ffe6cc;strokeColor=#d79b00;" value="OBJ01 (obj01)&lt;br&gt;MinIO (pgsty/minio)&lt;br&gt;cổng 9000, chỉ nội bộ" vertex="1">
+          <mxGeometry height="90" width="190" x="640" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="prom" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=#f5f5f5;strokeColor=#666666;" value="MON01 (prometheus)&lt;br&gt;Prometheus v2.52.0&lt;br&gt;mở ra máy: 9090" vertex="1">
+          <mxGeometry height="90" width="190" x="310" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="dbvol" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="volume&lt;br&gt;dbdata" vertex="1">
+          <mxGeometry height="80" width="100" x="870" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="objvol" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;" value="volume&lt;br&gt;objdata" vertex="1">
+          <mxGeometry height="80" width="100" x="870" y="365" as="geometry" />
+        </mxCell>
+        <mxCell id="spofApp" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;SPOF&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="50" x="450" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="spofDb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;SPOF&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="50" x="780" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="spofObj" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;SPOF&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="50" x="780" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="spofHost" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=10;fontStyle=1;" value="&lt;font style=&quot;font-size: 12px;&quot;&gt;SPOF: một máy chủ&lt;/font&gt;" vertex="1">
+          <mxGeometry height="20" width="150" x="880" y="64" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="user" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" target="app" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;HTTP :8080&lt;br&gt;điểm vào duy nhất&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="app" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" target="db" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;SQL :5432&lt;br&gt;sản phẩm, giỏ hàng, đơn hàng&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="app" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" target="obj" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;S3 :9000&lt;br&gt;ảnh sản phẩm&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="prom" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" target="app" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;scrape /metrics&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="user" style="endArrow=classic;html=1;rounded=0;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;" target="prom" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;HTTP :9090&lt;br&gt;xem giám sát&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="db" style="endArrow=none;html=1;strokeWidth=1;" target="dbvol" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="obj" style="endArrow=none;html=1;strokeWidth=1;" target="objvol" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="boundary" edge="1" parent="1" style="endArrow=none;dashed=1;html=1;strokeColor=#b85450;strokeWidth=3;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="45" as="sourcePoint" />
+            <mxPoint x="240" y="640" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="boundaryLbl" parent="1" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;verticalAlign=top;align=center;fontColor=#b85450;fontStyle=1;" value="Ranh giới tin cậy:&lt;br&gt;Internet / máy chủ" vertex="1">
+          <mxGeometry height="40" width="180" x="150" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="text;html=1;strokeColor=none;fillColor=none;whiteSpace=wrap;verticalAlign=top;align=left;fontSize=11;strokeColor=#666666;spacing=6;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Chú giải: mũi tên liền = luồng dữ liệu (nhãn ghi giao thức, cổng, nội dung); đường đứt đỏ = ranh giới tin cậy; ô đỏ SPOF = điểm lỗi đơn; hình trụ = volume lưu dữ liệu bền vững.&lt;br&gt;Trách nhiệm quản trị: nhóm tự quản trị toàn bộ (hệ điều hành, Docker, ứng dụng, cơ sở dữ liệu, sao lưu); không dùng dịch vụ được quản lý.&lt;br&gt;Cổng mở ra máy chủ: 8080 (ứng dụng) và 9090 (Prometheus), publish trên mọi giao diện mạng (0.0.0.0). DB01 và OBJ01 không mở cổng ra máy chủ.&lt;br&gt;OBJ01 được giữ trong kiến trúc cơ sở (quyết định 09/10/2026) để cùng mã nguồn chạy ở cả hai kiến trúc; đây là sai khác nhỏ so với định nghĩa trong PDF. Nguồn: docker ps ngày 09/10/2026.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="120" width="1010" x="30" y="690" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

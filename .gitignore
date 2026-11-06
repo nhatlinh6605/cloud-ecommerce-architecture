@@ -2,3 +2,9 @@
 node_modules/
 results/
 *.log
+
+# IaC state va secret
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars

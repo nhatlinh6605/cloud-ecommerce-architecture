@@ -1,0 +1,4 @@
+﻿Kịch bản,Throughput_Base_RPS,Throughput_Imp_RPS,Latency_p95_Base_ms,Latency_p95_Imp_ms,Error_Rate_Base_%,Error_Rate_Imp_%
+LOAD-NORMAL (20 VUs),86.51,85.23,5.06,10.18,0.0,0.0
+LOAD-PEAK (100 VUs),429.83,427.24,6.94,11.16,0.0,0.0
+LOAD-SPIKE (200 VUs),518.94,524.36,125.61,94.01,0.0,0.0

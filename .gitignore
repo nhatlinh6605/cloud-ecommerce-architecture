@@ -1,4 +1,5 @@
 .env
+note.txt
 node_modules/
 results/
 *.log

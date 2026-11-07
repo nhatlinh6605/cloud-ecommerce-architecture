@@ -1,0 +1,10 @@
+Timestamp,Event,Active_Instances,HTTP_Status,Failover_Latency_s,Notes
+2026-11-07T17:07:06+07:00,START_LOAD,"APP01, APP02",200,0,Khoi dong tai nen LOAD-NORMAL (20 VUs)
+2026-11-07T17:07:36+07:00,STOP_APP02_TRIGGERED,"APP01, APP02",200,0,Phat lenh dung container APP02
+2026-11-07T17:07:41+07:00,APP02_DOWN,"APP01",200,0,APP02 tat hoan toan; LB01 chuyen tiep 100% sang APP01
+2026-11-07T17:08:12+07:00,CHECK_ISOLATION,"APP01",200,0,Xac nhan 6/6 request den app01; HTTP 200 OK
+2026-11-07T17:08:13+07:00,START_APP02_TRIGGERED,"APP01",200,0,Phat lenh khoi dong lai container APP02
+2026-11-07T17:08:15+07:00,APP02_STARTED,"APP01",200,0,Container APP02 khoi dong xong
+2026-11-07T17:08:23+07:00,APP02_REJOIN_CLUSTER,"APP01, APP02",200,8.0,APP02 nhan lai request dau tien (RTO = 8s)
+2026-11-07T17:08:33+07:00,CHECK_LOAD_BALANCED,"APP01, APP02",200,0,Xac nhan luu luong chia deu lai cho ca 2 ban sao
+2026-11-07T17:09:48+07:00,END_LOAD,"APP01, APP02",200,0,Ket thuc chu ky tai nen 120s (Error rate: 0.015%)

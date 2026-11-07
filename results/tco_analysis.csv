@@ -1,0 +1,11 @@
+Table,Category,Component,Spec_or_Tier,Base_Cost_USD,Improved_Cost_USD,Delta_USD,Notes
+TCO_Monthly,Compute,App Tier,t3.medium (2 vCPU / 4GB RAM),30.37,60.74,30.37,Base 1 instance vs Improved 2 instances (HA)
+TCO_Monthly,Load_Balancer,Nginx / ALB,t3.micro,0.00,7.59,7.59,Base khong co LB; Improved dung Nginx Reverse Proxy
+TCO_Monthly,Database,PostgreSQL,db.t3.medium (RDS),50.40,50.40,0.00,Dung luong DB tuong duong giua 2 kien truc
+TCO_Monthly,Storage,Object Storage (MinIO/S3),50GB Standard + Requests,0.00,1.35,1.35,Base luu local; Improved tach rieng S3/MinIO
+TCO_Monthly,Monitoring,Prometheus & Grafana,t3.small,0.00,15.18,15.18,Giam sat thoi gian thuc va canh bao he thong
+TCO_Monthly,Network,Data Transfer,Outbound 100GB/thang,9.00,9.00,0.00,Chi phi truyen du lieu ra ngoai Internet
+TCO_Monthly,Total,Monthly_Total,Full Stack,89.77,144.26,54.49,Chenh lech +60.7% de dat chuan HA va RTO <= 10s
+Sensitivity,1x,Traffic Current,Base: Scale-up / Imp: Scale-out,89.77,144.26,54.49,Improved dat High Availability voi RTO 8s
+Sensitivity,2x,Traffic 2x,Base: t3.xlarge / Imp: 3x t3.medium,150.51,174.63,24.12,Khoang cach chi phi thu hep con 16%
+Sensitivity,5x,Traffic 5x,Base: t3.2xlarge / Imp: 4x t3.medium + RDS,332.73,265.74,-66.99,Improved tiet kiem 20.1% nho toi uu hoa Scale-out

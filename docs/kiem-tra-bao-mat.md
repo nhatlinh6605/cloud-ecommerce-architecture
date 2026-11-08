@@ -33,4 +33,10 @@ Kết quả: mọi dòng khớp chỉ là tên biến hoặc tham chiếu biến
 1. Cổng vào 8080 bind trên 0.0.0.0, thiết bị cùng mạng có thể truy cập. Chấp nhận với thực nghiệm cục bộ.
 2. Chưa có TLS giữa người dùng và hệ thống (đã ghi nhận trong `docs/truy-vet-yeu-cau.md`).
 3. Mật khẩu mẫu dùng trên máy thực nghiệm là dạng dễ đoán. Cần đặt mật khẩu mạnh và quản lý bằng kho bí mật khi triển khai thật.
-4. Chưa quét lỗ hổng image (ví dụ Trivy) và chưa kiểm tra chi tiết quyền tối thiểu của tài khoản DB/MinIO.
+4. Tài khoản DB `shop` có quyền Superuser (kiểm tra bằng `\du` trên db01). Đây là mặc định của image Postgres khi dùng `POSTGRES_USER`. Chưa đạt quyền tối thiểu. Hướng khắc phục: tạo role riêng chỉ có quyền trên schema của ứng dụng, dành `shop` cho quản trị.
+5. Tiến trình ứng dụng chạy bằng root trong container (`docker exec app01 id` trả về `uid=0`). Hướng khắc phục: thêm `USER node` vào `app/Dockerfile`.
+6. Chưa quét lỗ hổng image (ví dụ Trivy).
+
+## 5. Truy cập DB và object storage
+
+db01 và obj01 không mở cổng ra máy chủ ở cả hai kiến trúc (mục 1), nên chỉ tầng ứng dụng truy cập được qua mạng nội bộ. Chưa kiểm tra riêng chính sách bucket của MinIO.

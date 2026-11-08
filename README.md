@@ -36,7 +36,7 @@ bash scripts/improved-up.sh && bash scripts/run-load.sh improved 3
 bash scripts/fail-imp-01.sh          # dừng APP02 khi có tải rồi bật lại (kiến trúc cải tiến)
 ```
 Kết quả thô nằm trong `results/` (đã gitignore; nộp kèm minh chứng riêng). Cùng một `load/load.js` cho cả hai kiến trúc.
-**Lưu ý:** VUs/thời lượng trong `load/load.js` là giá trị tạm, cần thay bằng tham số trong bảng NFR của Thoại.
+**Lưu ý:** VUs/thời lượng trong `load/load.js` đã đối chiếu với bảng NFR (`docs/bang-nfr.md`): LOAD-NORMAL 20 VUs, LOAD-PEAK 100 VUs, LOAD-SPIKE 200 VUs.
 
 ## Danh mục phiên bản
 Xem `docs/danh-muc-phien-ban.md`. Bảo mật: không đưa secret vào Git; chỉ commit `.env.example`.

@@ -1,5 +1,5 @@
 // k6: cùng một workload cho cả hai kiến trúc. Chọn mức tải bằng PROFILE=normal|peak|spike
-// !! Giá trị VUs/thời lượng bên dưới là MẶC ĐỊNH TẠM — thay bằng tham số trong bảng NFR của Thoại.
+// Tham số VUs/thời lượng đã đối chiếu với docs/bang-nfr.md: khớp LOAD-NORMAL, LOAD-PEAK, LOAD-SPIKE.
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 
